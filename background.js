@@ -1,5 +1,5 @@
 //Constants
-const API_URL = 'https://crudcrud.com/api/6c59f7774d224b32a35108e0b0dac2ff/goto';
+const API_URL = 'https://crudcrud.com/api/6c59f7774d224b32a35108e0b0dac2ff/mygoto';
 
 // This event is fired each time the extension is loaded.
 chrome.runtime.onInstalled.addListener(() => {
@@ -67,35 +67,47 @@ function loadDataFromServer() {
       }
       return response.json();
     })
-    .then(dataObject => {
-      // Extract the 'data' array from the fetched object
-      const dataArray = dataObject.data;
-      // Transform the array into a map of keywords to URLs
-      const urlMap = dataArray.reduce((map, item) => {
-        map[item.keyword] = item.url;
-        return map;
-      }, {});
+    .then(dataArray => {
+      // Initialize an empty map to store the combined keyword-url pairs
+      const urlMap = {};
+
+      // Iterate over each object in the dataArray
+      dataArray.forEach(dataObject => {
+        // Check if the dataObject has a 'data' property
+        if (dataObject.data) {
+          // Extract the 'data' array from the dataObject
+          const innerDataArray = dataObject.data;
+          // Transform the array into a map of keywords to URLs
+          innerDataArray.forEach(item => {
+            urlMap[item.keyword] = item.url;
+          });
+        }
+      });
+
+      // Set the combined map in local storage
       chrome.storage.local.set({ 'urlMap': urlMap }, () => {
         console.log('Initial data loaded from server and set in local storage.');
       });
     })
     .catch(error => {
-      console.log('Failed to load data from server:', error);
+      console.error('Failed to load data from server:', error);
     });
 }
+
+
   
   // This event is fired with the user accepts the input in the omnibox.
   chrome.omnibox.onInputEntered.addListener((text) => {
     // Retrieve the map from local storage.
     chrome.storage.local.get('urlMap', (result) => {
-      const urlMap = result.urlMap;
+      const urlMap = result.urlMap || {};
       let redirectUrl = urlMap[text];
-  
       if (redirectUrl) {
         if (!redirectUrl.startsWith('http://') && !redirectUrl.startsWith('https://')) {
         redirectUrl = `https://${redirectUrl}`;
       }
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          console.log("opening: ", redirectUrl)
           chrome.tabs.update(tabs[0].id, {url: redirectUrl});
         });
       } else {
@@ -112,4 +124,3 @@ function loadDataFromServer() {
       sendResponse({status: 'success'});
     }
   });
-  
