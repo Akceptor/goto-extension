@@ -1,0 +1,19 @@
+{
+  "name": "GoTo",
+"version": "1.0",
+"description": "GoTo - golinks alternative",
+"manifest_version": 3,
+"omnibox": { 
+    "keyword": "goto" 
+},
+"background": {
+    "service_worker": "background.js"
+},
+"permissions": [
+    "tabs", "webNavigation", "storage"
+],
+"web_accessible_resources": [{
+  "resources": ["updateTable.js", "styles/style.css"],
+  "matches": ["<all_urls>"]
+}]
+}
