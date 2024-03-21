@@ -33,7 +33,7 @@ function updateTable() {
       url: url
     }, (response) => {
       if (response.status === 'success') {
-        console.log('New keyword added.');
+        console.log('New keyword added, id=', response.id);
         // Close the current tab after a short delay to allow for the console message.
         setTimeout(() => window.close(), 1000);
         // Update the table with the new keyword.

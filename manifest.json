@@ -15,5 +15,9 @@
 "web_accessible_resources": [{
   "resources": ["updateTable.js", "styles/style.css"],
   "matches": ["<all_urls>"]
-}]
+}],
+"host_permissions": [
+  "https://01hsgrb7phh335xra3hv120dke00-3b8f4d08337981989f83.requestinspector.com/",
+  "https://crudcrud.com/api/6c59f7774d224b32a35108e0b0dac2ff/*"
+]
 }
